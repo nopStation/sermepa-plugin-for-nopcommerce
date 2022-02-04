@@ -27,20 +27,23 @@ namespace Nop.Plugin.Payments.Sermepa
         private readonly ISettingService _settingService;
         private readonly IWebHelper _webHelper;
         private readonly ILocalizationService _localizationService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         #endregion
 
         #region Ctor
 
         public SermepaPaymentProcessor(SermepaPaymentSettings sermepaPaymentSettings,
-            ISettingService settingService, 
+            ISettingService settingService,
             IWebHelper webHelper,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService, 
+            IHttpContextAccessor httpContextAccessor)
         {
             _sermepaPaymentSettings = sermepaPaymentSettings;
             _settingService = settingService;
             _webHelper = webHelper;
             _localizationService = localizationService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #endregion
@@ -128,7 +131,7 @@ namespace Nop.Plugin.Payments.Sermepa
             var shaResultStr = BitConverter.ToString(shaResult).Replace("-", "");
 
             //Creamos el POST
-            var remotePostHelper = new RemotePost
+            var remotePostHelper = new RemotePost(_httpContextAccessor,_webHelper)
             {
                 FormName = "form1",
                 Url = GetSermepaUrl()
